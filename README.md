@@ -16,9 +16,9 @@ Things to note:
 
 Syntax: 
 ./create-iso.sh \
-<ISO_PATH> \
-<Kickstart> \
-<ISOFilename>
+[ISO_PATH] \
+[Kickstart] \
+[ISOFilename]
 
 Sample:
 sudo ./create-iso.sh \
