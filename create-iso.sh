@@ -29,6 +29,7 @@ label kickstart
 
 EOF
 sed -i -e $'/\label linux/{e cat     ks-temp.txt\n}' temp-iso/isolinux/isolinux.cfg
+rm -rf ks-temp.txt
 
 cat <<EOF > grub-temp.txt
 menuentry 'Install via Kickstart' --class fedora --class gnu-linux --class gnu --class os {
@@ -37,10 +38,11 @@ menuentry 'Install via Kickstart' --class fedora --class gnu-linux --class gnu -
 }
 
 EOF
-sed -i -e $'/\menuentry \'Install AlmaLinux 8.5\'/{e cat     grub-temp.txt\n}' temp-iso/EFI/BOOT/grub.cfg
+sed -i -e $'/submenu/{e cat     grub-temp.txt\n}' temp-iso/EFI/BOOT/grub.cfg
+rm -rf grub-temp.txt 
 
-# 4. Create the custom iso file
-cd ./temp-iso && mkisofs -o $DIR/$3.iso -b isolinux/isolinux.bin -J -R -l -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img -no-emul-boot -graft-points -V "$LABEL" . && isohybrid --uefi $DIR/$3.iso && implantisomd5 $DIR/$3.iso
+4. Create the custom iso file
+cd ./temp-iso && mkisofs -joliet-long -o $DIR/$3.iso -b isolinux/isolinux.bin -J -R -l -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e images/efiboot.img -no-emul-boot -graft-points -V "$LABEL" . && isohybrid --uefi $DIR/$3.iso && implantisomd5 $DIR/$3.iso
 
 
 # Clean up and unmount the iso
@@ -48,8 +50,7 @@ umount $DIR/raw-iso
 rm -rf $DIR/temp-iso
 rm -rf $DIR/raw-iso
 
+# This is for WSL test only
 # Transfer the files on windows dekstop
-cp -rf $DIR/$3.iso /mnt/c/Users/admin/Desktop/customiso/linux/$3.iso
-rm -rf $DIR/$3.iso
-rm -rf grub-temp.txt 
-rm -rf ks-temp.txt
+# cp -rf $DIR/$3.iso /mnt/c/Users/admin/Desktop/customiso/linux/$3.iso
+# rm -rf $DIR/$3.iso
